@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRCodeGen | Gerador de QR Code</title>
+  <meta name="description" content="Gere QR Codes de links, textos, Wi-Fi, WhatsApp, e-mail e contatos, personalize as cores e baixe em PNG ou SVG.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topo">
+    <h1 class="marca"><span class="logo" aria-hidden="true"></span>QRCode<b>Gen</b></h1>
+    <p>Gere QR Codes de graça, sem cadastro e sem marca d'água. Tudo é feito no seu navegador.</p>
+  </header>
+
+  <main class="layout">
+    <section class="painel editor">
+      <div class="tipos" role="tablist" aria-label="Tipo de conteúdo">
+        <button role="tab" data-tipo="link" aria-selected="true"><span>🔗</span>Link</button>
+        <button role="tab" data-tipo="texto" aria-selected="false"><span>📝</span>Texto</button>
+        <button role="tab" data-tipo="whatsapp" aria-selected="false"><span>💬</span>WhatsApp</button>
+        <button role="tab" data-tipo="wifi" aria-selected="false"><span>📶</span>Wi-Fi</button>
+        <button role="tab" data-tipo="contato" aria-selected="false"><span>👤</span>Contato</button>
+        <button role="tab" data-tipo="email" aria-selected="false"><span>✉️</span>E-mail</button>
+      </div>
+
+      <form id="form" class="campos" autocomplete="off" novalidate>
+        <div data-campos="link"><label>Endereço do site<input id="c-link" type="url" placeholder="https://seusite.com.br" value="https://viniciuslimadev.netlify.app"></label></div>
+        <div data-campos="texto" hidden><label>Texto<textarea id="c-texto" rows="4" maxlength="1500" placeholder="Qualquer texto, até 1.500 caracteres"></textarea></label><small class="cont" id="cont-texto"></small></div>
+        <div data-campos="whatsapp" hidden>
+          <div class="g2">
+            <label>DDI<input id="c-wa-ddi" value="55" inputmode="numeric" maxlength="3"></label>
+            <label>Número com DDD<input id="c-wa-num" inputmode="tel" placeholder="(51) 99999-9999"></label>
+          </div>
+          <label>Mensagem pronta (opcional)<textarea id="c-wa-msg" rows="2" maxlength="300" placeholder="Olá! Vi seu anúncio e gostaria de saber mais."></textarea></label>
+        </div>
+        <div data-campos="wifi" hidden>
+          <label>Nome da rede (SSID)<input id="c-wifi-ssid" placeholder="Minha casa"></label>
+          <div class="g2">
+            <label>Senha<input id="c-wifi-senha" type="text"></label>
+            <label>Segurança<select id="c-wifi-tipo"><option value="WPA">WPA/WPA2/WPA3</option><option value="WEP">WEP</option><option value="nopass">Sem senha</option></select></label>
+          </div>
+          <label class="check"><input type="checkbox" id="c-wifi-oculta"> Rede oculta</label>
+        </div>
+        <div data-campos="contato" hidden>
+          <div class="g2">
+            <label>Nome<input id="c-ct-nome"></label>
+            <label>Sobrenome<input id="c-ct-sobre"></label>
+            <label>Telefone<input id="c-ct-tel" inputmode="tel"></label>
+            <label>E-mail<input id="c-ct-email" type="email"></label>
+            <label>Empresa<input id="c-ct-emp"></label>
+            <label>Cargo<input id="c-ct-cargo"></label>
+          </div>
+          <label>Site<input id="c-ct-site" type="url" placeholder="https://"></label>
+        </div>
+        <div data-campos="email" hidden>
+          <label>Para<input id="c-em-para" type="email" placeholder="contato@empresa.com"></label>
+          <label>Assunto<input id="c-em-assunto"></label>
+          <label>Mensagem<textarea id="c-em-corpo" rows="3"></textarea></label>
+        </div>
+      </form>
+
+      <details class="estilo" open>
+        <summary>Personalizar</summary>
+        <div class="estilo__grade">
+          <label class="cor">Cor do código<span><input type="color" id="cor-frente" value="#111827"><code id="hex-frente">#111827</code></span></label>
+          <label class="cor">Cor de fundo<span><input type="color" id="cor-fundo" value="#ffffff"><code id="hex-fundo">#ffffff</code></span></label>
+          <div class="paletas" id="paletas" aria-label="Combinações prontas"></div>
+          <fieldset class="formato"><legend>Formato dos pontos</legend>
+            <label><input type="radio" name="forma" value="quadrado" checked><span>■ Quadrado</span></label>
+            <label><input type="radio" name="forma" value="arredondado"><span>▢ Arredondado</span></label>
+            <label><input type="radio" name="forma" value="ponto"><span>● Pontos</span></label>
+          </fieldset>
+          <label>Correção de erros
+            <select id="nivel"><option value="L">Baixa (7%) — código menor</option><option value="M" selected>Média (15%) — recomendado</option><option value="Q">Alta (25%)</option><option value="H">Máxima (30%) — para imprimir</option></select>
+          </label>
+          <label>Tamanho do download <output id="tam-val">1024 px</output><input type="range" id="tam" min="256" max="2048" step="128" value="1024"></label>
+          <label class="check"><input type="checkbox" id="margem" checked> Margem de segurança</label>
+        </div>
+      </details>
+    </section>
+
+    <section class="painel previa">
+      <div class="moldura" id="moldura"><canvas id="canvas" width="320" height="320" aria-label="QR Code gerado" role="img"></canvas></div>
+      <p class="info" id="info"></p>
+      <p class="aviso" id="aviso" role="alert"></p>
+      <div class="baixar">
+        <button class="btn" id="baixar-png">⬇ Baixar PNG</button>
+        <button class="btn claro" id="baixar-svg">⬇ SVG</button>
+        <button class="btn claro" id="copiar">Copiar imagem</button>
+      </div>
+      <p class="conteudo" id="conteudo" title="Conteúdo do QR Code"></p>
+      <div class="historico">
+        <h2>Recentes</h2>
+        <ul id="hist"></ul>
+      </div>
+    </section>
+  </main>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script src="js/qr.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>
